@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: backend-finanzas
+    env: node
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        value: mongodb+srv://Estelalegria:Azul2027@testing.bwxekbl.mongodb.net/?retryWrites=true&w=majority&appName=testing
+      - key: JWT_SECRET
+        value: azul2028
+      - key: CORREO_APP
+        value: stellaalegria1998@gmail.com
+      - key: CORREO_APP_PASS
+        value: bqkopngtwecqkgoj
