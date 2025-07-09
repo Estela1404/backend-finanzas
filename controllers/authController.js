@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// ---------- REGISTRO ----------
 export const register = async (req, res) => {
   try {
     const { documentoidentidad, nombre, correo, password, rol } = req.body;
@@ -16,13 +18,16 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "El correo ya está registrado" });
     }
 
-    // Guarda la contraseña tal cual
+    // ✅ Encriptar la contraseña antes de guardar
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const nuevoUsuario = new User({
       documentoidentidad,
       nombre,
       correo,
-      password,
-      rol
+      password: hashedPassword, // Guardar hasheada
+      rol,
     });
 
     await nuevoUsuario.save();
@@ -34,6 +39,7 @@ export const register = async (req, res) => {
   }
 };
 
+// ---------- LOGIN ----------
 export const login = async (req, res) => {
   try {
     const { correo, password } = req.body;
@@ -47,8 +53,9 @@ export const login = async (req, res) => {
       return res.status(401).json({ msg: "Correo o contraseña incorrectos" });
     }
 
-    // Comparación directa
-    if (password !== user.password) {
+    // ✅ Comparar contraseña encriptada
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ msg: "Correo o contraseña incorrectos" });
     }
 

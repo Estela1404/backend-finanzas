@@ -3,9 +3,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
+
+// Importa tus rutas
 import authRoutes from './routes/authRoutes.js';
 import ingresoRoutes from './routes/ingresoRoutes.js';
 import gastoRoutes from './routes/gastoRoutes.js';
+import transferenciaRoutes from './routes/transferenciaRoutes.js';
+import recurrenteRoutes from './routes/recurrenteRoutes.js'; // ⬅️ NUEVO
 
 dotenv.config();
 connectDB();
@@ -30,6 +34,12 @@ app.use('/api/ingresos', ingresoRoutes);
 
 // Rutas de gastos
 app.use('/api/gasto', gastoRoutes);
+
+// Rutas de transferencias
+app.use('/api/transferencias', transferenciaRoutes);
+
+// Rutas de gastos recurrentes
+app.use('/api/recurrentes', recurrenteRoutes); // ⬅️ NUEVO
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
