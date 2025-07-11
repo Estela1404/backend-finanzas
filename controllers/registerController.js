@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import nodemailer from "nodemailer";
 
 export const register = async (req, res) => {
   const { nombre, correo, password, documentoidentidad, rol } = req.body;
@@ -29,14 +30,47 @@ export const register = async (req, res) => {
     const newUser = new User({
       nombre,
       correo,
-      password: hashedPassword, // Contraseña cifrada
+      password: hashedPassword,
       documentoidentidad,
       rol: rol || "user",
     });
 
     await newUser.save();
 
-    // Responder con un mensaje de éxito sin incluir password
+    // Enviar correo de bienvenida
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.CORREO_APP,
+        pass: process.env.CORREO_APP_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Soporte Cash Optimize" <${process.env.CORREO_APP}>`,
+      to: correo,
+      subject: "¡Bienvenido a Cash Optimize!",
+      html: `
+        <div style="font-family: Arial, sans-serif;">
+          <h2>Hola ${newUser.nombre},</h2>
+          <p>¡Tu cuenta ha sido registrada exitosamente en <strong>Cash Optimize</strong>!</p>
+          <p>Ya puedes acceder con tu correo y contraseña.</p>
+          <p>Si tienes alguna duda, no dudes en escribirnos.</p>
+          <br/>
+          <p>Gracias por confiar en nosotros.</p>
+          <p><strong>Equipo de Cash Optimize</strong></p>
+        </div>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log("✅ Correo de bienvenida enviado a:", correo);
+    } catch (error) {
+      console.error("❌ Error al enviar correo de bienvenida:", error);
+    }
+
+    // Responder al cliente (sin password)
     res.status(201).json({
       msg: "Usuario registrado exitosamente",
       user: {

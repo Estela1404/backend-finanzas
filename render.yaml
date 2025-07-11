@@ -17,3 +17,5 @@ services:
         value: stellaalegria1998@gmail.com
       - key: CORREO_APP_PASS
         value: bqkopngtwecqkgoj
+      - key: CLIENT_URL
+        value: http://localhost:5173

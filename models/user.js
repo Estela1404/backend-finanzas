@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   correo: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // esto ya crea un índice único
     trim: true,
     match: [/^\S+@\S+\.\S+$/, 'El correo no es válido']
   },
@@ -24,15 +24,13 @@ const userSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['user', 'admin'], // 🔁 corregido aquí
+    enum: ['user', 'admin'],
     default: 'user'
   }
 });
 
-// Índice único en correo
-userSchema.index({ correo: 1 }, { unique: true });
+// ✅ Ya no hay necesidad de userSchema.index
 
 const User = mongoose.model('User', userSchema);
 
 export default User;
-  
