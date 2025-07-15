@@ -40,7 +40,7 @@ export const recuperarPassword = async (req, res) => {
       html: `
         <p>Hola ${user.nombre},</p>
         <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-        <a href="http://localhost:5173/reestablecer/${resetToken}">Restablecer contraseña</a>
+        <a href="${process.env.CLIENT_URL}/reestablecer/${resetToken}">Restablecer contraseña</a>
         <p>Si no solicitaste este correo, ignóralo.</p>
       `,
     };
